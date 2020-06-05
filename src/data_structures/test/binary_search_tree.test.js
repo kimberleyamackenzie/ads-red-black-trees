@@ -133,10 +133,7 @@ dataStructures.forEach(TargetDS => {
         // of how insert works to do this? How can you check your work?
 
         it('can remove the record with the smallest key', () => {
-          // TODO:
-          // Insert several records
-          // Remove the record with the smallest key
-          // Ensure that looking up that key returns undefined
+
         });
 
         it('can remove the record with the largest key', () => {
