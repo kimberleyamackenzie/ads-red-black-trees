@@ -15,7 +15,7 @@ class BinarySearchTree {
     this._root = undefined;
   }
 
-  insert(key, value = true) {
+  _insertInternal(key, value = true) {
     const results = this._findNode(key);
     // The node may or may not exist
     let { node } = results;
@@ -44,6 +44,10 @@ class BinarySearchTree {
     }
 
     return node;
+  }
+
+  insert(key, value = true) {
+    this._insertInternal(key, value);
   }
 
   lookup(key) {
@@ -146,7 +150,7 @@ class BinarySearchTree {
     return this._count;
   }
 
-  forEach(callback) {
+  _forEachInternal(callback, container){
     // This is a little different from the version presented in the video.
     // The form is similar, but it invokes the callback with more arguments
     // to match the interface for Array.forEach:
@@ -154,12 +158,16 @@ class BinarySearchTree {
     const visitSubtree = (node, callback, i = 0) => {
       if (node) {
         i = visitSubtree(node.left, callback, i);
-        callback({ key: node.key, value: node.value }, i, this);
+        callback({ key: node.key, value: node.value }, i, container);
         i = visitSubtree(node.right, callback, i + 1);
       }
       return i;
     }
-    visitSubtree(this._root, callback)
+    visitSubtree(container._root, callback)
+  }
+
+  forEach(callback) {
+    this._forEachInternal(callback, this);
   }
 }
 

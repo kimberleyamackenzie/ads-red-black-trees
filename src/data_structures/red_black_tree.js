@@ -1,3 +1,5 @@
+import BinarySearchTree from "./binary_search_tree";
+
 // Exported for the tests :(
 export class RBTNode {
   static BLACK = 'black';
@@ -20,23 +22,19 @@ export class RBTNode {
   }
 }
 
-class RedBlackTree {
-  constructor(Node = RBTNode) {
-    this.Node = Node;
-  }
-
-  lookup(key) {
-
+class RedBlackTree extends BinarySearchTree {
+  constructor() {
+    super(RBTNode)
   }
 
   /**
    * The two rotation functions are symetric, and could presumably
    * be collapsed into one that takes a direction 'left' or 'right',
    * calculates the opposite, and uses [] instead of . to access.
-   * 
+   *
    * Felt too confusing to be worth it. Plus I bet* the JIT optimizes two
    * functions with static lookups better than one with dynamic lookups.
-   * 
+   *
    * (*without any evidence whatsoever, 10 points to anyone who tries it out)
    */
   _rotateLeft(node) {
@@ -102,10 +100,82 @@ class RedBlackTree {
     node.parent = child;
   }
 
-  _insertInternal(key, value) {
-  }
-
   _insertRebalance(node) {
+    // The possible rule we violated is two red nodes in a row
+
+    // We know the node we just inserted is red
+
+    // We should check the parent, which could be red
+    // If the parent is black, we're good
+
+    // If not, then we know the grandparent is black, because of induction
+
+    // Uncle could be red or black
+
+    // We only need to do this so long as we have two red nodes in a row from our most recent insert
+    while (node.color === RBTNode.RED && node.parent.color === RBTNode.RED){
+      const grandparentNode = node.parent.parent;
+
+      // If the parent node is the left child
+      if (node.parent === grandparentNode.left){
+        // Then the uncle is the right child
+        const uncleNode = grandparentNode.right;
+
+        // If the uncle is red
+        if (uncleNode.color === RBTNode.RED){
+          // Swap colors of the generations
+          node.parent.color = RBTNode.BLACK;
+          uncleNode.color = RBTNode.BLACK;
+          grandparentNode.color = RBTNode.RED;
+          // Move up the tree to see if we solved the problem
+          node = grandparentNode;
+
+        // If the uncle is black
+        } else {
+          if (node === node.parent.right){
+            node = node.parent;
+            this._rotateLeft(node);
+          }
+
+          node.parent.color = RBTNode.BLACK;
+          grandparentNode.color = RBTNode.RED;
+          this._rotateRight(grandparentNode);
+        }
+      }
+
+      // If the parent node is the right child
+      // node.parent === grandparentNode.right
+      else {
+        // Then the uncle is the left child
+        const uncleNode = grandparentNode.left;
+
+        // If the uncle is red
+        if (uncleNode.color === RBTNode.RED){
+            // Same thing we did above
+            // Swap colors of the generations
+            node.parent.color = RBTNode.BLACK;
+            uncleNode.color = RBTNode.BLACK;
+            grandparentNode.color = RBTNode.RED;
+            // Move up the tree to see if we solved the problem
+            node = grandparentNode;
+
+        // Same thing we did above, but reversed
+        // If the uncle is black
+        } else {
+          if (node === node.parent.left){
+            node = node.parent;
+            this._rotateRight(node);
+          }
+
+          node.parent.color = RBTNode.BLACK;
+          grandparentNode.color = RBTNode.RED;
+          this._rotateLeft(grandparentNode);
+          }
+        }
+      }
+
+    // Make sure the root is black
+    this._root.color = RBTNode.BLACK;
   }
 
   insert(key, value) {
@@ -113,16 +183,8 @@ class RedBlackTree {
     this._insertRebalance(node);
   }
 
-  delete(key) {
-
-  }
-
-  count() {
-
-  }
-
   forEach(callback) {
-    
+    this._forEachInternal(callback, this);
   }
 }
 
