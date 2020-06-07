@@ -46,7 +46,7 @@ class BinarySearchTree {
     return node;
   }
 
-  insert(key, value = true) {
+  insert(key, value) {
     this._insertInternal(key, value);
   }
 
@@ -156,7 +156,7 @@ class BinarySearchTree {
     // to match the interface for Array.forEach:
     //   callback({ key, value }, i, this)
     const visitSubtree = (node, callback, i = 0) => {
-      if (node) {
+      if (node?.key) {
         i = visitSubtree(node.left, callback, i);
         callback({ key: node.key, value: node.value }, i, container);
         i = visitSubtree(node.right, callback, i + 1);
